@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	template="/META-INF/LayoutPadrao.xhtml">
+
+	<ui:define name="titulo">
+        #{!cadastroUsuarioBean.editando ? "Edição de usuário" : "Novo usuário"}
+    </ui:define>
+
+
+	<ui:define name="corpo">
+		<f:metadata>
+			<o:viewParam name="usuario" value="#{cadastroUsuarioBean.usuario}" />
+			<f:viewAction action="#{cadastroUsuarioBean.inicializar}" />
+		</f:metadata>
+
+		<h:form id="frm" style="margin-top: 40px">
+			<p:messages autoUpdate="true" closable="true" id="msg"/>
+			<h1>#{cadastroUsuarioBean.detalheUserEdit}</h1>
+
+			<p:toolbar style="margin-top: 10px; margin-bottom: 20px">
+				<p:toolbarGroup>
+					<p:button value="Novo" />
+					<p:commandButton value="Salvar" id="btnSalvar"
+						process="@this painel-novo-cliente" 
+						update="@this painel-novo-cliente :frm:telefones-table :frm:msg"
+						action="#{cadastroUsuarioBean.salvar}" />
+
+					<p:separator />
+					<p:commandButton value="Adicionar Telefone" id="btnAddFone" 
+						actionListener="#{cadastroUsuarioBean.prepararNovoTelefone()}"
+						process="@this" update=":frm:telefoneDialog" oncomplete="PF('telefoneDialogWV').show()">
+					<p:resetInput target="telefoneDialog" />
+					</p:commandButton>
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:button value="Pesquisar" outcome="/usuario/PesquisaUsuario" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+			<p:panelGrid columns="2" id="painel-novo-cliente" style="width: 100%" columnClasses="rotulo, campo">
+				<p:outputLabel value="Nome" for="field_nome" />
+				<p:inputText id="field_nome" size="60" maxlength="60"
+					required="true" autocomplete="off"
+					value="#{cadastroUsuarioBean.usuario.nome}" />
+
+
+				<p:outputLabel value="E-mail" for="field_email" />
+				<p:inputText id="field_email" size="60" maxlength="80"
+					required="true" autocomplete="off"
+					validatorMessage="E-mail inválido"
+					value="#{cadastroUsuarioBean.usuario.email}" />
+
+				<p:outputLabel value="Senha" for="field_senha" required="true" />
+				<p:password id="field_senha" size="30"
+					value="#{cadastroUsuarioBean.usuario.senha}" feedback="true"
+					promptLabel="Informe uma senha Segura" weakLabel="Fraca"
+					inline="true" goodLabel="Boa" strongLabel="Forte" />
+			</p:panelGrid>
+			
+			<!-- Table para os telefones -->
+			
+			
+			<p:dataTable id="telefones-table" var="telefone" emptyMessage="Nenhum registro encontrato" rows="5" paginator="true" 
+				paginatorAlwaysVisible="false" paginatorPosition="bottom" 
+				style="margin-top: 30px;" value="#{cadastroUsuarioBean.usuario.telefones}">
+				
+				<p:column headerText="DDD" style="text-align: center; width: 50px;">
+					<h:outputText value="#{telefone.ddd}" />
+				</p:column>
+				
+				<p:column headerText="Número" style="text-align: center;">
+					<h:outputText value="#{telefone.numero}" />
+				</p:column>
+			
+				<p:column headerText="Tipo" style="text-align: center;">
+					<h:outputText value="#{telefone.tipo}" />
+				</p:column>
+				
+				<p:column style="width: 100px; text-align: center">
+					<p:commandButton icon="ui-icon-pencil" title="Editar"
+						process="@this" update=":frm:telefonePanelGroup"
+						onsuccess="PF('telefoneDialogWV').show()" 
+						actionListener="#{cadastroUsuarioBean.editarTelefone(telefone)}">
+						<p:resetInput target=":frm:telefoneDialog" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-trash" title="Excluir"
+						process="@this" update="telefones-table :frm:msg"
+						action="#{cadastroUsuarioBean.excluirTelefone(telefone)}"/>
+				</p:column>
+			</p:dataTable>
+
+			<!-- Dialo para incluir um novo telefone -->
+
+			<p:dialog header="Incluir ou editar Telefone" id="telefoneDialog"
+				widgetVar="telefoneDialogWV" modal="true" closeOnEscape="true">
+
+				<h:panelGroup id="telefonePanelGroup">
+					<p:messages id="enderecoMessages" autoUpdate="false" />
+
+					<h:panelGrid columns="2">
+						<p:outputLabel value="DDD" for="field_ddd" />
+						<p:inputMask id="field_ddd" size="3" maxlength="2" value="#{cadastroUsuarioBean.telefone.ddd}" required="true" mask="99"/>
+
+						<p:outputLabel value="Número" for="field_numero" />
+						<p:inputMask id="field_numero" size="20" maxlength="20" value="#{cadastroUsuarioBean.telefone.numero}" required="true" mask="9 9999-9999"/>
+
+						<p:outputLabel value="Tipo" for="field_tipo" />
+						<p:inputText id="field_tipo" size="20" maxlength="20" value="#{cadastroUsuarioBean.telefone.tipo}"/>
+						
+						<p:outputLabel />
+						<p:spacer />
+						<p:commandButton
+							value="#{cadastroUsuarioBean.editandoTelefone ? 'Alterar' : 'Incluir'}"
+							action="#{cadastroUsuarioBean.adicionarTelefone}"
+							ignoreAutoUpdate="true" process="telefonePanelGroup"
+							update=":frm:telefonePanelGroup :frm:telefones-table :frm:enderecoMessages"
+							oncomplete="if (!args.validationFailed) PF('telefoneDialogWV').hide()" />
+					</h:panelGrid>
+				</h:panelGroup>
+
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>
