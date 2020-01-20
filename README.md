@@ -14,6 +14,9 @@
 * Primefaces 7.0
 * Hibernate 5
 
+## Servidor
+* Tomcat 7
+
 ## Banco de Dados
 * H2 - `Em disco`
 
