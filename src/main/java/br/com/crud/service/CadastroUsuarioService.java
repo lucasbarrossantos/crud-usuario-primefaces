@@ -3,6 +3,8 @@ package br.com.crud.service;
 import java.io.Serializable;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.com.crud.model.Telefone;
 import br.com.crud.model.Usuario;
 import br.com.crud.repository.TelefoneRepository;
@@ -20,6 +22,7 @@ public class CadastroUsuarioService implements Serializable {
 
 	@TransactionalOperation
 	public Usuario salvar(Usuario usuario) {
+		validarSenha(usuario);		
 		return this.usuarioRepository.salvar(usuario);
 	}
 
@@ -28,4 +31,13 @@ public class CadastroUsuarioService implements Serializable {
 		telefoneRepository.removerTelefone(telefone);
 	}
 
+	private void validarSenha(Usuario usuario) {
+		if (usuario != null && usuario.getId() != null) {
+			if (StringUtils.isEmpty(usuario.getSenha())) {
+				Usuario usuarioDB = usuarioRepository.findById(usuario.getId());
+				usuario.setSenha(usuarioDB.getSenha());
+			}
+		}
+	}
+	
 }

@@ -14,11 +14,11 @@
 				<p:menuitem value="Usuários" url="/CrudLogin/usuario/CadastroUsuario.xhtml"/>
 			</p:submenu>
 
-			<p:menuitem value="Sair" icon="fa fa-sign-in" />
+			<p:menuitem value="Sair" icon="fa fa-sign-in" url="/CrudLogin/login.xhtml"/>
 		</p:submenu>		
 
 		<f:facet name="options">
-			<p:commandButton type="button" value="Sair" icon="fa fa-sign-in" />
+			Bem-vind@: #{usuarioSistema.usuarioLogado.nome} <p:commandButton value="Sair" icon="fa fa-sign-in" action="#{loginBean.sair}"/>
 		</f:facet>
 	</p:menubar>
 

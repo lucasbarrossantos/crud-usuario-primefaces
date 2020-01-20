@@ -19,20 +19,26 @@ import org.apache.commons.lang3.StringUtils;
 import br.com.crud.model.Usuario;
 import br.com.crud.repository.filter.UsuarioFilter;
 import br.com.crud.service.NegocioException;
-import br.com.crud.util.TransactionalOperation;
 
 public class UsuarioRepository implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Inject
 	private EntityManager manager;
-	
+
 	public Usuario salvar(Usuario usuario) {
 		return this.manager.merge(usuario);
 	}
-	
+
 	public Usuario findById(Long id) {
 		return manager.find(Usuario.class, id);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Usuario findByEmailAndSenha(String email, String senha) {
+		List<Usuario> usuarios = manager.createQuery("from Usuario u where u.email = :email and u.senha = :senha")
+				.setParameter("email", email).setParameter("senha", senha).getResultList();
+		return usuarios.size() > 0 ? usuarios.get(0) : null;
 	}
 
 	public List<Usuario> filtrados(UsuarioFilter filtro) {
@@ -47,14 +53,14 @@ public class UsuarioRepository implements Serializable {
 		return query.getResultList().stream().sorted(Comparator.comparing(Usuario::getNome))
 				.collect(Collectors.toList());
 	}
-	
+
 	private Predicate[] criarRestrincoes(UsuarioFilter filtro, CriteriaBuilder builder, Root<Usuario> root) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		if (!StringUtils.isEmpty(filtro.getNome())) {
 			predicates.add(builder.like(builder.lower(root.get("nome")), "%" + filtro.getNome().toLowerCase() + "%"));
 		}
-		
+
 		if (!StringUtils.isEmpty(filtro.getEmail())) {
 			predicates.add(builder.equal(builder.lower(root.get("email")), filtro.getEmail().toLowerCase()));
 		}
@@ -64,13 +70,15 @@ public class UsuarioRepository implements Serializable {
 
 	public void excluir(Usuario usuario) {
 		try {
-			usuario = findById(usuario.getId()); // É preciso recuperar o Objeto para que ele faça parte desta Transactional
+			usuario = findById(usuario.getId()); // É preciso recuperar o Objeto para que ele faça parte desta
+													// Transactional
 			this.manager.remove(usuario);
 			this.manager.flush(); // Aqui garante que o banco vai atualizar depois que excluir o objeto.
 		} catch (Exception e) {
 			e.getStackTrace();
-			throw new NegocioException("O Usuário não pode ser excluído! Entre em contato com o Administrador do Sistema.");
-		}		
+			throw new NegocioException(
+					"O Usuário não pode ser excluído! Entre em contato com o Administrador do Sistema.");
+		}
 	}
 
 }

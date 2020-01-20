@@ -27,7 +27,11 @@ public class PesquisaUsuarioBean implements Serializable {
 	@Inject
 	public PesquisaUsuarioBean(UsuarioRepository usuarioRepository) {
 		this.filtro = new UsuarioFilter();
-		this.usuarioRepository = usuarioRepository;
+		this.usuarioRepository = usuarioRepository;		
+	}
+	
+	public void iniciar() {
+		
 	}
 	
 	public void pesquisar() {

@@ -1,0 +1,1 @@
+insert into usuario (email, nome, senha) values ('lucas-barros28@hotmail.com', 'Lucas Barros Santos', 'admin@123')
