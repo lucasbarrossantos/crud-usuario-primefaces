@@ -64,3 +64,6 @@ Em seguida vá em:
 * [Login](https://raw.githubusercontent.com/lucasbarrossantos/crud-usuario-primefaces/master/WebContent/resources/images/login.png)  <br/> 
 * [Listagem de Usuários](https://raw.githubusercontent.com/lucasbarrossantos/crud-usuario-primefaces/master/WebContent/resources/images/pesquisa-de-usuarios.png)  <br/> 
 * [Editar Usuário](https://raw.githubusercontent.com/lucasbarrossantos/crud-usuario-primefaces/master/WebContent/resources/images/edit-usuario.png)  <br/> 
+
+## URL
+Após executar a aplicação é só acessar o [Login](http://localhost:8080/CrudLogin/login.xhtml)
